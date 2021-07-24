@@ -63,6 +63,11 @@ const tagsData = [
 
 export default function App() {
   const [sheetCount, setSheetCount] = useState(1);
+  const [paperSpecs, setPaperSpecs] = useState({
+    lenght: 10,
+    width: 10,
+    grammage: 20,
+  });
   const [imageSource, setImageSource] = useState(images.sheet1);
   useEffect(() => {
     console.log("sheetCount is " + sheetCount);
@@ -186,20 +191,26 @@ export default function App() {
         <SectionContainer style={styles.bottomSection}>
           <CustomerProgressRow
             title="Lenght"
-            defaultVal="80"
+            defaultVal={paperSpecs.lenght}
             unit="mm"
+            onChangeText={(text) => updatePaperLength(text)}
+            onProgressValueChange={(value) => updatePaperLength(value)}
           ></CustomerProgressRow>
 
           <CustomerProgressRow
             title="Width"
-            defaultVal="80"
+            defaultVal={paperSpecs.width}
             unit="mm"
+            onChangeText={(text) => updatePaperWidth(text)}
+            onProgressValueChange={(value) => updatePaperWidth(value)}
           ></CustomerProgressRow>
 
           <CustomerProgressRow
             title="Grammage"
-            defaultVal="80"
+            defaultVal={paperSpecs.grammage}
             unit="g"
+            onChangeText={(text) => updatePaperGrammage(text)}
+            onProgressValueChange={(value) => updatePaperGrammage(value)}
           ></CustomerProgressRow>
         </SectionContainer>
       </ScrollView>
@@ -232,6 +243,18 @@ export default function App() {
   function decreaseSheetCount() {
     console.log("!Pressed");
     if (sheetCount > 1) setSheetCount(sheetCount - 1);
+  }
+
+  function updatePaperLength(value) {
+    setPaperSpecs({ ...paperSpecs, lenght: value ?? 0 });
+  }
+
+  function updatePaperWidth(value) {
+    setPaperSpecs({ ...paperSpecs, width: value ?? 0 });
+  }
+
+  function updatePaperGrammage(value) {
+    setPaperSpecs({ ...paperSpecs, grammage: value ?? 0 });
   }
 }
 

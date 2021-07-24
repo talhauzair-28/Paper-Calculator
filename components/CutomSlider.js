@@ -10,17 +10,16 @@ const CustomSlider = (props) => {
   return (
     <Slider
       style={{ ...styles.slider, ...props.style }}
+      step={props.step ?? 1}
       minimumValue={props.minVal ?? 1}
       maximumValue={props.maxVal ?? 300}
-      minimumTrackTintColor={colors.primary}
       value={parseInt(props.value) ?? 0}
+      minimumTrackTintColor={colors.primary}
+      maximumTrackTintColor={colors.dark_blue}
       thumbTintColor={colors.primary}
       thumbImage={images.progressThumb}
-      maximumTrackTintColor={colors.dark_blue}
-      step={props.step ?? 1}
-      onValueChange={(value) => {
-        console.log(value);
-      }}
+      onValueChange={props.onValueChange}
+      onSlidingComplete={props.onProgressValueChange}
     />
   );
 };

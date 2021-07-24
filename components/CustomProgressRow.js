@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, TextInput, StyleSheet } from "react-native";
 
 import TextMontserrat from "./TextMontserrat";
@@ -9,6 +9,7 @@ import commonStyles from "../constants/commonStyles";
 import TextInputMontserrat from "./TextInputMontserrat";
 
 const CustomerProgressrow = (props) => {
+  const [textValue, setTextValue] = useState(0);
   return (
     <View style={styles.container}>
       <View
@@ -17,25 +18,31 @@ const CustomerProgressrow = (props) => {
         }}
       >
         <TextMontserrat
-          style={{ ...commonStyles.text_white_med, marginLeft: 20 }}
+          style={{ ...commonStyles.text_white_med, marginLeft: 20, flex: 1 }}
           textType="bold"
         >
           {props.title}
         </TextMontserrat>
-        <View
-          style={{
-            ...styles.valueInputStyling,
-            ...styles.itemValueSection,
-          }}
-        >
+        <View style={styles.valueInputStyling}>
           <TextInputMontserrat
-            style={commonStyles.text_white_reg}
-            value={`${props.defaultVal ?? "00"}`}
+            style={{
+              ...commonStyles.text_white_reg,
+              textAlign: "right",
+            }}
+            value={`${textValue ?? "00"}`}
             keyboardType="numeric"
             textType="regular"
+            onChangeText={(text) => {
+              setTextValue(parseInt(text));
+              props.onChangeText(parseInt(text));
+            }}
           />
           <TextMontserrat
-            style={commonStyles.text_white_reg}
+            style={{
+              ...commonStyles.text_white_reg,
+              marginLeft: 4,
+              marginBottom: 3,
+            }}
             textType="regular"
           >
             {props.unit ?? "mm"}
@@ -43,9 +50,11 @@ const CustomerProgressrow = (props) => {
         </View>
       </View>
       <CustomSlider
-        minVal={5}
+        minVal={1}
         maxVal={400}
         value={props.defaultVal}
+        onValueChange={(value) => setTextValue(parseInt(value))}
+        onProgressValueChange={props.onProgressValueChange}
       ></CustomSlider>
     </View>
   );
@@ -58,19 +67,16 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   valueInputStyling: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     paddingHorizontal: 10,
     paddingTop: 8,
     paddingBottom: 7,
-    minWidth: 48,
     height: 30,
     backgroundColor: colors.dark_blue,
     borderRadius: dimens.tag_borderRadius,
     marginRight: 20,
-  },
-  itemValueSection: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
   },
 });
 
