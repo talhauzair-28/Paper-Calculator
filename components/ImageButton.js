@@ -3,7 +3,7 @@ import { Image, TouchableOpacity, StyleSheet, useState } from "react-native";
 
 const ImageButton = (props) => {
   return (
-    <TouchableOpacity activeOpacity={0.5}>
+    <TouchableOpacity activeOpacity={0.5} onPress={props.onPress}>
       <Image
         source={props.source}
         style={{ ...style.imageStyle, ...props.style }}

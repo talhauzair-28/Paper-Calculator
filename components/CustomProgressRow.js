@@ -6,6 +6,7 @@ import CustomSlider from "./CutomSlider";
 import colors from "../constants/colors";
 import dimens from "../constants/dimens";
 import commonStyles from "../constants/commonStyles";
+import TextInputMontserrat from "./TextInputMontserrat";
 
 const CustomerProgressrow = (props) => {
   return (
@@ -27,10 +28,11 @@ const CustomerProgressrow = (props) => {
             ...styles.itemValueSection,
           }}
         >
-          <TextInput
+          <TextInputMontserrat
             style={commonStyles.text_white_reg}
-            value={props.defaultVal ?? "00"}
+            value={`${props.defaultVal ?? "00"}`}
             keyboardType="numeric"
+            textType="regular"
           />
           <TextMontserrat
             style={commonStyles.text_white_reg}

@@ -1,7 +1,14 @@
 //Native imports
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
-import { StyleSheet, View, ScrollView, Image, FlatList } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  Image,
+  FlatList,
+  TextInput,
+} from "react-native";
 
 // 3rd Party imports
 import { TagSelect } from "react-native-tag-select";
@@ -12,6 +19,7 @@ import Header from "./components/Header.js";
 import ImageButton from "./components/ImageButton.js";
 import SectionContainer from "./components/SectionContainer";
 import TextMontserrat from "./components/TextMontserrat.js";
+import TextInputMontserrat from "./components/TextInputMontserrat.js";
 import colors from "./constants/colors.js";
 import dimens from "./constants/dimens.js";
 import images from "./constants/images.js";
@@ -55,7 +63,25 @@ const tagsData = [
 
 export default function App() {
   const [sheetCount, setSheetCount] = useState(1);
-  const [sheetInputValue, setsheetInputValue] = useState(0);
+  const [imageSource, setImageSource] = useState(images.sheet1);
+  useEffect(() => {
+    console.log("sheetCount is " + sheetCount);
+    if (sheetCount <= 1) {
+      setImageSource(images.sheet1);
+    } else if (sheetCount >= 2 && sheetCount < 10) {
+      setImageSource(images.sheet2);
+    } else if (sheetCount >= 10 && sheetCount < 25) {
+      setImageSource(images.sheet3);
+    } else if (sheetCount >= 25 && sheetCount < 50) {
+      setImageSource(images.sheet4);
+    } else {
+      setImageSource(images.sheet5);
+    }
+    return () => {
+      //cleanup;
+    };
+  });
+
   const [outputText, setOutputText] = useState(
     "Open up App.js to start working on your app!"
   );
@@ -67,16 +93,17 @@ export default function App() {
       <ScrollView>
         <SectionContainer style={styles.topSection}>
           <View style={styles.paperCountContainer}>
-            <Image style={styles.pagesImage} source={images.sheet2} />
+            <Image style={styles.pagesImage} source={imageSource} />
 
             <View style={styles.paperEntrySection}>
               <SectionContainer style={styles.sheetCountBox}>
-                <TextMontserrat
+                <TextInputMontserrat
                   style={commonStyles.text_white_large}
                   textType="bold"
-                >
-                  {sheetInputValue}
-                </TextMontserrat>
+                  value={`${sheetCount}`}
+                  keyboardType="numeric"
+                  onChangeText={(text) => setSheetCount(text)}
+                ></TextInputMontserrat>
                 <TextMontserrat
                   style={commonStyles.text_white_small}
                   textType="regular"
@@ -88,11 +115,13 @@ export default function App() {
               <ImageButton
                 style={styles.addButtonStyle}
                 source={images.addIcon}
+                onPress={increaseSheetCount}
               ></ImageButton>
 
               <ImageButton
                 style={styles.minusButtonStyle}
                 source={images.minusIcon}
+                onPress={decreaseSheetCount}
               ></ImageButton>
             </View>
           </View>
@@ -192,6 +221,18 @@ export default function App() {
       }
     </View>
   );
+
+  /// functions
+
+  function increaseSheetCount() {
+    console.log("Pressed");
+    if (sheetCount < 100) setSheetCount(sheetCount + 1);
+  }
+
+  function decreaseSheetCount() {
+    console.log("!Pressed");
+    if (sheetCount > 1) setSheetCount(sheetCount - 1);
+  }
 }
 
 const styles = StyleSheet.create({
@@ -245,10 +286,12 @@ const styles = StyleSheet.create({
     height: 74,
     width: 74,
     marginHorizontal: 20,
+    marginVertical: 10,
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "rgba(74, 81, 113, 0.2)",
+    position: "absolute",
     padding: 0,
     // backgroundColor: `${getHexColorWithAlpha(colors.dark_blue, 0.2)}`,
   },
@@ -259,24 +302,22 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   paperEntrySection: {
-    height: 74,
+    height: 94,
     width: 74,
     flexDirection: "column",
     marginHorizontal: 20,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
   },
   addButtonStyle: {
     height: 20,
     width: 20,
     zIndex: 999,
-    marginTop: -84,
   },
   minusButtonStyle: {
     height: 20,
     width: 20,
     zIndex: 999,
-    marginTop: -10,
   },
   paperSizeRowItem: {
     margin: 8,
