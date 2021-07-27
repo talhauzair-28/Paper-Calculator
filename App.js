@@ -7,12 +7,11 @@ import {
   ScrollView,
   Image,
   FlatList,
-  TextInput,
+  TouchableOpacity,
 } from "react-native";
 
 // 3rd Party imports
 import { TagSelect } from "react-native-tag-select";
-import Slider from "@react-native-community/slider";
 
 // Custom imports
 import Header from "./components/Header.js";
@@ -31,44 +30,59 @@ const tagSelectionhandler = function (props) {};
 const paperSizeData = [
   {
     paperSize: "A2",
+    length: 594,
+    width: 420,
   },
   {
     paperSize: "A3",
+    length: 297,
+    width: 420,
   },
   {
     paperSize: "A4",
+    length: 294,
+    width: 210,
   },
   {
     paperSize: "A5",
+    length: 210,
+    width: 148,
   },
   {
     paperSize: "DIN LANG",
+    length: 210,
+    width: 99,
   },
   {
     paperSize: "Custom",
+    length: 294,
+    width: 210,
   },
 ];
 
-const tagsData = [
-  { id: 1, label: "Money" },
-  { id: 2, label: "Credit card" },
-  { id: 3, label: "Debit card" },
-  { id: 4, label: "Online payment" },
-  { id: 5, label: "Bitcoin" },
-  { id: 6, label: "Jazz Cash" },
-  { id: 7, label: "Easy Paisa" },
-  { id: 8, label: "E Wallet" },
-  { id: 9, label: "Bank Transfer" },
+const paperTypeData = [
+  { id: 1, label: "DIN A", grammage: 40 },
+  { id: 2, label: "DIN B", grammage: 60 },
+  { id: 3, label: "DIN C", grammage: 80 },
+  { id: 4, label: "DIN D", grammage: 90 },
+  { id: 5, label: "US Formate", grammage: 180 },
+  { id: 6, label: "JIS B", grammage: 120 },
+  { id: 7, label: "Custom", grammage: 10 },
 ];
 
 export default function App() {
   const [sheetCount, setSheetCount] = useState(1);
   const [paperSpecs, setPaperSpecs] = useState({
-    lenght: 10,
-    width: 10,
-    grammage: 20,
+    length: paperSizeData[0].length,
+    width: paperSizeData[0].width,
+    grammage: paperTypeData[0].grammage,
+    paperTypeName: paperTypeData[0].label,
+    paperSizeName: paperSizeData[0].paperSize,
   });
+  const [totalWeight, setTotalWeight] = useState(1);
   const [imageSource, setImageSource] = useState(images.sheet1);
+  const tagRef = useRef();
+
   useEffect(() => {
     console.log("sheetCount is " + sheetCount);
     if (sheetCount <= 1) {
@@ -82,6 +96,15 @@ export default function App() {
     } else {
       setImageSource(images.sheet5);
     }
+
+    tagRef.value = setTotalWeight(
+      (paperSpecs.length *
+        paperSpecs.width *
+        paperSpecs.grammage *
+        sheetCount) /
+        (1000 * 1000)
+    );
+
     return () => {
       //cleanup;
     };
@@ -91,7 +114,6 @@ export default function App() {
     "Open up App.js to start working on your app!"
   );
 
-  let tagString = "Hello";
   return (
     <View style={styles.mainContainer}>
       <Header title="Paper Calculator"></Header>
@@ -141,7 +163,7 @@ export default function App() {
               style={commonStyles.text_white_large}
               textType="bold"
             >
-              4.99 g
+              {`${totalWeight} g`}
             </TextMontserrat>
           </SectionContainer>
         </SectionContainer>
@@ -150,18 +172,21 @@ export default function App() {
             <ScrollView>
               {/* Tags here */}
               <TagSelect
-                data={tagsData}
+                data={paperTypeData}
+                value={[paperTypeData[0]]}
                 itemStyle={styles.tagItem}
                 itemLabelStyle={styles.tagLabel}
                 itemStyleSelected={styles.tagItemSelected}
                 itemLabelStyleSelected={styles.tagLabelSelected}
+                max={1}
                 ref={(tag) => {
-                  tagString = tag;
+                  tagRef.current = tag;
                 }}
-                onItemPress={() => {
-                  tagString.itemsSelected.forEach((element) => {
-                    console.log(element.label + ", " + element.id);
-                  });
+                onItemPress={(item) => {
+                  updatePaperGrammage(item.grammage, item.label);
+                }}
+                onMaxError={() => {
+                  console.log("Ops", "Max reached");
                 }}
               />
             </ScrollView>
@@ -170,18 +195,31 @@ export default function App() {
             <FlatList
               horizontal
               data={paperSizeData}
+              extraData={paperSpecs}
               style={{
                 marginHorizontal: 14,
                 flex: 1,
               }}
               renderItem={({ item: rowData }) => {
+                console.log("FlatList Item: " + paperSpecs.paperSizeName);
                 return (
-                  <TextMontserrat
-                    style={styles.paperSizeRowItem}
-                    textType="regular"
+                  <TouchableOpacity
+                    onPress={() => paperSizeSelectionHandler(rowData)}
                   >
-                    {`${rowData.paperSize}`}
-                  </TextMontserrat>
+                    <TextMontserrat
+                      style={
+                        paperSpecs.paperSizeName !== rowData.paperSize
+                          ? styles.paperSizeRowItem
+                          : {
+                              ...styles.paperSizeRowItem,
+                              ...styles.selectedPaperSizeRowItem,
+                            }
+                      }
+                      textType="regular"
+                    >
+                      {`${rowData.paperSize}`}
+                    </TextMontserrat>
+                  </TouchableOpacity>
                 );
               }}
               keyExtractor={(item, index) => index}
@@ -190,8 +228,8 @@ export default function App() {
         </SectionContainer>
         <SectionContainer style={styles.bottomSection}>
           <CustomerProgressRow
-            title="Lenght"
-            defaultVal={paperSpecs.lenght}
+            title="Length"
+            defaultVal={paperSpecs.length}
             unit="mm"
             onChangeText={(text) => updatePaperLength(text)}
             onProgressValueChange={(value) => updatePaperLength(value)}
@@ -209,8 +247,10 @@ export default function App() {
             title="Grammage"
             defaultVal={paperSpecs.grammage}
             unit="g"
-            onChangeText={(text) => updatePaperGrammage(text)}
-            onProgressValueChange={(value) => updatePaperGrammage(value)}
+            onChangeText={(text) => updatePaperGrammage(text, "Custom")}
+            onProgressValueChange={(value) =>
+              updatePaperGrammage(value, "Custom")
+            }
           ></CustomerProgressRow>
         </SectionContainer>
       </ScrollView>
@@ -246,15 +286,46 @@ export default function App() {
   }
 
   function updatePaperLength(value) {
-    setPaperSpecs({ ...paperSpecs, lenght: value ?? 0 });
+    setPaperSpecs({
+      ...paperSpecs,
+      length: value ?? 0,
+      paperSizeName: "Custom",
+    });
   }
 
   function updatePaperWidth(value) {
-    setPaperSpecs({ ...paperSpecs, width: value ?? 0 });
+    setPaperSpecs({
+      ...paperSpecs,
+      width: value ?? 0,
+      paperSizeName: "Custom",
+    });
   }
 
-  function updatePaperGrammage(value) {
-    setPaperSpecs({ ...paperSpecs, grammage: value ?? 0 });
+  function updatePaperGrammage(value, name) {
+    setPaperSpecs({
+      ...paperSpecs,
+      grammage: value ?? 0,
+      paperTypeName: name,
+    });
+
+    if (name === "Custom") {
+      console.log("grammage update:" + value.label);
+      tagRef.current.selectCustom;
+    }
+  }
+
+  function updatePaperSize(item) {
+    setPaperSpecs({
+      ...paperSpecs,
+      width: item.width ?? 0,
+      length: item.length ?? 0,
+      paperSizeName: item.paperSize,
+    });
+  }
+
+  function paperSizeSelectionHandler(item) {
+    console.log("Selected Pressed: " + item.paperSize);
+    updatePaperSize(item);
   }
 }
 
@@ -346,6 +417,9 @@ const styles = StyleSheet.create({
     margin: 8,
     fontSize: dimens.textsize_reg,
     color: colors.papersize_text_color,
+  },
+  selectedPaperSizeRowItem: {
+    color: colors.primary,
   },
   tagItem: {
     borderWidth: 0,

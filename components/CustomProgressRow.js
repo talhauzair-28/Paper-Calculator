@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { View, TextInput, StyleSheet } from "react-native";
 
 import TextMontserrat from "./TextMontserrat";
@@ -9,7 +9,14 @@ import commonStyles from "../constants/commonStyles";
 import TextInputMontserrat from "./TextInputMontserrat";
 
 const CustomerProgressrow = (props) => {
-  const [textValue, setTextValue] = useState(0);
+  const [textValue, setTextValue] = useState(props.defaultVal + 1 - 1);
+  //const textValueRef = useRef(textValue);
+  useEffect(() => {
+    setTextValue(props.defaultVal);
+    console.log("changed");
+    return () => {};
+  }, [props.defaultVal]);
+
   return (
     <View style={styles.container}>
       <View
@@ -28,6 +35,7 @@ const CustomerProgressrow = (props) => {
             style={{
               ...commonStyles.text_white_reg,
               textAlign: "right",
+              letterSpacing: 0,
             }}
             value={`${textValue ?? "00"}`}
             keyboardType="numeric"
@@ -51,7 +59,7 @@ const CustomerProgressrow = (props) => {
       </View>
       <CustomSlider
         minVal={1}
-        maxVal={400}
+        maxVal={999}
         value={props.defaultVal}
         onValueChange={(value) => setTextValue(parseInt(value))}
         onProgressValueChange={props.onProgressValueChange}
