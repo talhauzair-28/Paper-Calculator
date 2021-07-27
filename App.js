@@ -129,7 +129,10 @@ export default function App() {
             <View style={styles.paperEntrySection}>
               <SectionContainer style={styles.sheetCountBox}>
                 <TextInputMontserrat
-                  style={commonStyles.text_white_large}
+                  style={{
+                    ...commonStyles.text_white_large,
+                    textAlign: "center",
+                  }}
                   textType="bold"
                   value={`${sheetCount}`}
                   keyboardType="numeric"
@@ -229,7 +232,7 @@ export default function App() {
                   </TouchableOpacity>
                 );
               }}
-              keyExtractor={(item, index) => index}
+              keyExtractor={(item, index) => index + ""}
             />
           </SectionContainer>
         </SectionContainer>
@@ -426,7 +429,6 @@ const styles = StyleSheet.create({
     color: colors.papersize_text_color,
     backgroundColor: "transparent",
     borderWidth: 0,
-    fontFamily: "Montserrat_400Regular",
     fontSize: dimens.textsize_reg,
   },
   tagItemSelected: {
@@ -439,7 +441,6 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     backgroundColor: "transparent",
     borderWidth: 0,
-    fontFamily: "Montserrat_400Regular",
     fontSize: dimens.textsize_reg,
   },
   paperSizeList: {
