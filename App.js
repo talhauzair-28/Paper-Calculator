@@ -97,12 +97,14 @@ export default function App() {
       setImageSource(images.sheet5);
     }
 
-    tagRef.value = setTotalWeight(
-      (paperSpecs.length *
-        paperSpecs.width *
-        paperSpecs.grammage *
-        sheetCount) /
+    setTotalWeight(
+      (
+        (paperSpecs.length *
+          paperSpecs.width *
+          paperSpecs.grammage *
+          sheetCount) /
         (1000 * 1000)
+      ).toFixed(2)
     );
 
     return () => {
