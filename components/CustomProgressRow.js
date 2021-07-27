@@ -10,7 +10,6 @@ import TextInputMontserrat from "./TextInputMontserrat";
 
 const CustomerProgressrow = (props) => {
   const [textValue, setTextValue] = useState(props.defaultVal + 1 - 1);
-  //const textValueRef = useRef(textValue);
   useEffect(() => {
     setTextValue(props.defaultVal);
     console.log("changed");
@@ -19,17 +18,14 @@ const CustomerProgressrow = (props) => {
 
   return (
     <View style={styles.container}>
-      <View
-        style={{
-          flexDirection: "row",
-        }}
-      >
+      <View style={{ flexDirection: "row" }}>
         <TextMontserrat
           style={{ ...commonStyles.text_white_med, marginLeft: 20, flex: 1 }}
           textType="bold"
         >
           {props.title}
         </TextMontserrat>
+
         <View style={styles.valueInputStyling}>
           <TextInputMontserrat
             style={{
@@ -45,6 +41,7 @@ const CustomerProgressrow = (props) => {
               props.onChangeText(parseInt(text));
             }}
           />
+
           <TextMontserrat
             style={{
               ...commonStyles.text_white_reg,
@@ -57,6 +54,7 @@ const CustomerProgressrow = (props) => {
           </TextMontserrat>
         </View>
       </View>
+
       <CustomSlider
         minVal={1}
         maxVal={999}

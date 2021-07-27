@@ -71,20 +71,20 @@ const paperTypeData = [
 ];
 
 export default function App() {
-  const [sheetCount, setSheetCount] = useState(1);
+  const [sheetCount, setSheetCount] = useState(1); // to Maintain the sheet count
   const [paperSpecs, setPaperSpecs] = useState({
+    // Maintain the current selected paper specs
     length: paperSizeData[0].length,
     width: paperSizeData[0].width,
     grammage: paperTypeData[0].grammage,
     paperTypeName: paperTypeData[0].label,
     paperSizeName: paperSizeData[0].paperSize,
   });
-  const [totalWeight, setTotalWeight] = useState(1);
-  const [imageSource, setImageSource] = useState(images.sheet1);
+  const [totalWeight, setTotalWeight] = useState(1); /// Total Weight calculated based on paper specs
+  const [imageSource, setImageSource] = useState(images.sheet1); /// Image Sheet Icon source maintained based on SheetCount
   const tagRef = useRef();
 
   useEffect(() => {
-    console.log("sheetCount is " + sheetCount);
     if (sheetCount <= 1) {
       setImageSource(images.sheet1);
     } else if (sheetCount >= 2 && sheetCount < 10) {
@@ -119,11 +119,13 @@ export default function App() {
   return (
     <View style={styles.mainContainer}>
       <Header title="Paper Calculator"></Header>
+
       <ScrollView>
         <SectionContainer style={styles.topSection}>
           <View style={styles.paperCountContainer}>
             <Image style={styles.pagesImage} source={imageSource} />
 
+            {/* RightSide Section for Paper Count Selection (+,- buttons and count) */}
             <View style={styles.paperEntrySection}>
               <SectionContainer style={styles.sheetCountBox}>
                 <TextInputMontserrat
@@ -133,6 +135,7 @@ export default function App() {
                   keyboardType="numeric"
                   onChangeText={(text) => setSheetCount(text)}
                 ></TextInputMontserrat>
+
                 <TextMontserrat
                   style={commonStyles.text_white_small}
                   textType="regular"
@@ -154,6 +157,8 @@ export default function App() {
               ></ImageButton>
             </View>
           </View>
+
+          {/* Result Section for show total weight of paper stack */}
           <SectionContainer style={styles.resultSection}>
             <TextMontserrat
               style={commonStyles.text_white_reg}
@@ -161,6 +166,7 @@ export default function App() {
             >
               Per Copy
             </TextMontserrat>
+
             <TextMontserrat
               style={commonStyles.text_white_large}
               textType="bold"
@@ -169,10 +175,11 @@ export default function App() {
             </TextMontserrat>
           </SectionContainer>
         </SectionContainer>
+
         <SectionContainer style={styles.midSection}>
           <View style={{ flex: 1, padding: 20 }}>
             <ScrollView>
-              {/* Tags here */}
+              {/* Tags here for page type. */}
               <TagSelect
                 data={paperTypeData}
                 value={[paperTypeData[0]]}
@@ -193,15 +200,13 @@ export default function App() {
               />
             </ScrollView>
           </View>
+
           <SectionContainer style={styles.paperSizeSection}>
             <FlatList
               horizontal
               data={paperSizeData}
               extraData={paperSpecs}
-              style={{
-                marginHorizontal: 14,
-                flex: 1,
-              }}
+              style={styles.paperSizeList}
               renderItem={({ item: rowData }) => {
                 console.log("FlatList Item: " + paperSpecs.paperSizeName);
                 return (
@@ -228,6 +233,7 @@ export default function App() {
             />
           </SectionContainer>
         </SectionContainer>
+
         <SectionContainer style={styles.bottomSection}>
           <CustomerProgressRow
             title="Length"
@@ -256,22 +262,8 @@ export default function App() {
           ></CustomerProgressRow>
         </SectionContainer>
       </ScrollView>
-      {/* <View style={styles.topSection}>
-        <Text>The worlds</Text>
-        <Text>The world is yhoursssss</Text>
-      </View> */}
 
-      {
-        /* <View style={{ padding: 50, innerHeight: 50, backgroundColor: "green" }}>
-        <Text style={{ backgroundColor: "white" }}>"Paper Calculator 2"</Text>
-      </View>
-      <Text>{outputText}</Text>
-      <Button
-        title="Change Text"
-        onPress={() => setOutputText("The Text has been changed")}
-      />*/
-        <StatusBar style="auto" />
-      }
+      <StatusBar style="auto" />
     </View>
   );
 
@@ -279,7 +271,7 @@ export default function App() {
 
   function increaseSheetCount() {
     console.log("Pressed");
-    if (sheetCount < 100) setSheetCount(sheetCount + 1);
+    if (sheetCount < 999) setSheetCount(sheetCount + 1);
   }
 
   function decreaseSheetCount() {
@@ -377,7 +369,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
-
   sheetCountBox: {
     height: 74,
     width: 74,
@@ -450,6 +441,10 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     fontFamily: "Montserrat_400Regular",
     fontSize: dimens.textsize_reg,
+  },
+  paperSizeList: {
+    marginHorizontal: 14,
+    flex: 1,
   },
 });
 
